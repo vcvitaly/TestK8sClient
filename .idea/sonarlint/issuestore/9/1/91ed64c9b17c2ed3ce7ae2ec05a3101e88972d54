@@ -1,6 +1,0 @@
-
-]	java:S125""<This block of commented-out lines of code should be removed.(¿ÚÛùÿÿÿÿ8¾¨è¼1
-L	java:S106;"+Replace this use of System.out by a logger.(ñ—¸½úÿÿÿÿ8èö¼1
-G	java:S106X"+Replace this use of System.out by a logger.(à”Û÷8›èö¼1
-F
-java:S1128")Remove this unused import 'okio.Options'.(šËƒ—8¯ıõ¼1
