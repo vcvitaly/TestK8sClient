@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ${NAME}.
@@ -23,8 +24,6 @@ import java.io.InputStreamReader;
  */
 public class Main {
     public static void main(String[] args) throws IOException, ApiException, InterruptedException {
-        final var namespace = "default";
-        final var podName = "nginx-785c6c55c8-bcw99";
         ApiClient client = Config.defaultClient();
         Configuration.setDefaultApiClient(client);
 
@@ -33,16 +32,13 @@ public class Main {
         // final Process proc = exec.exec("default", "nginx-4217019353-k5sn9", new String[]
         //   {"sh", "-c", "echo foo"}, true, tty);
         final Process proc =
-                exec.exec(namespace, podName, new String[] {"sh"}, true, tty);
+                exec.exec("default", "nginx-7fcc8b5dfd-whwz9", new String[] {"sh"}, true, tty);
 
         Thread in =
                 new Thread(
                         () -> {
-                            try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-                                String line;
-                                while (!(line = br.readLine()).equalsIgnoreCase("exit")) {
-                                    Streams.copy(new ByteArrayInputStream(line.getBytes()), proc.getOutputStream());
-                                }
+                            try {
+                                Streams.copy(System.in, proc.getOutputStream());
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }
@@ -53,12 +49,7 @@ public class Main {
                 new Thread(
                         () -> {
                             try {
-                                try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                                    String line;
-                                    while ((line = br.readLine()) != null) {
-                                        System.out.println(line);
-                                    }
-                                }
+                                Streams.copy(proc.getInputStream(), System.out);
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }
