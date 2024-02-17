@@ -15,6 +15,8 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,8 +51,24 @@ public class Main {
                 new Thread(
                         () -> {
                             try {
-                                Streams.copy(proc.getInputStream(), System.out);
-                            } catch (IOException ex) {
+                                try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+                                    List<String> lines = new ArrayList<>();
+                                    while (true) {
+                                        if (br.ready()) {
+                                            String line = br.readLine();
+                                            lines.add(line);
+                                        } else {
+                                            if (!lines.isEmpty()) {
+                                                System.out.println("---");
+                                                lines.forEach(System.out::println);
+                                                System.out.println("---");
+                                                lines = new ArrayList<>();
+                                            }
+                                        }
+                                        Thread.sleep(5);
+                                    }
+                                }
+                            } catch (IOException | InterruptedException ex) {
                                 ex.printStackTrace();
                             }
                         });
