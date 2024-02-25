@@ -58,9 +58,7 @@ public class Main {
                                         lines.add(line);
                                     } else {
                                         if (!lines.isEmpty()) {
-                                            System.out.println("---");
                                             lines.forEach(System.out::println);
-                                            System.out.println("---");
                                             lines = new ArrayList<>();
                                         }
                                     }
@@ -71,6 +69,31 @@ public class Main {
                             }
                         });
         out.start();
+
+        Thread err =
+                new Thread(
+                        () -> {
+                            try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getErrorStream()))) {
+                                List<String> lines = new ArrayList<>();
+                                while (true) {
+                                    if (br.ready()) {
+                                        String line = br.readLine();
+                                        lines.add(line);
+                                    } else {
+                                        if (!lines.isEmpty()) {
+                                            System.out.println("Error:");
+                                            lines.forEach(System.out::println);
+                                            lines = new ArrayList<>();
+                                        }
+                                    }
+                                    Thread.sleep(5);
+                                }
+                            } catch (IOException | InterruptedException ex) {
+//                                ex.printStackTrace();
+                                System.out.println(ex.getMessage());
+                            }
+                        });
+        err.start();
 
         proc.waitFor();
 
