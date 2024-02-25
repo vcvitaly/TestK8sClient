@@ -34,7 +34,7 @@ public class Main {
         // final Process proc = exec.exec("default", "nginx-4217019353-k5sn9", new String[]
         //   {"sh", "-c", "echo foo"}, true, tty);
         final Process proc =
-                exec.exec("default", "nginx-7fcc8b5dfd-whwz9", new String[] {"sh"}, true, tty);
+                exec.exec("default", "nginx-0e66fad1-7fddb66f44-cwp5v", new String[] {"sh"}, true, tty);
 
         Thread in =
                 new Thread(
@@ -50,23 +50,21 @@ public class Main {
         Thread out =
                 new Thread(
                         () -> {
-                            try {
-                                try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                                    List<String> lines = new ArrayList<>();
-                                    while (true) {
-                                        if (br.ready()) {
-                                            String line = br.readLine();
-                                            lines.add(line);
-                                        } else {
-                                            if (!lines.isEmpty()) {
-                                                System.out.println("---");
-                                                lines.forEach(System.out::println);
-                                                System.out.println("---");
-                                                lines = new ArrayList<>();
-                                            }
+                            try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+                                List<String> lines = new ArrayList<>();
+                                while (true) {
+                                    if (br.ready()) {
+                                        String line = br.readLine();
+                                        lines.add(line);
+                                    } else {
+                                        if (!lines.isEmpty()) {
+                                            System.out.println("---");
+                                            lines.forEach(System.out::println);
+                                            System.out.println("---");
+                                            lines = new ArrayList<>();
                                         }
-                                        Thread.sleep(5);
                                     }
+                                    Thread.sleep(5);
                                 }
                             } catch (IOException | InterruptedException ex) {
                                 ex.printStackTrace();
