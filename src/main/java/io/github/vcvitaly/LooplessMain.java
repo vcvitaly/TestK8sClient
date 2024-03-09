@@ -5,11 +5,12 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.Configuration;
 import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.Streams;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,33 @@ public class LooplessMain {
         final Process proc =
                 exec.exec("default", "nginx-6748cb78-7fddb66f44-v8kjt", new String[] {"sh"}, true, tty);
 
+        System.out.println(executeInProc(proc, "ls /home"));
+        Thread.sleep(1000);
+        System.out.println(executeInProc(proc, "ls /home"));
+
+        proc.waitFor();
+        waitAndLog("Finished proc.waitFor()");
+
+        waitAndLog("Finished out.join()");
+
+        proc.destroy();
+        waitAndLog("Finished proc.destroy()");
+
+        System.exit(proc.exitValue());
+    }
+
+    private static List<String> executeInProc(Process proc, String cmd) {
+        final var ref = new Object() {
+            List<String> lines = new ArrayList<>();
+        };
+
         Thread.ofVirtual().start(() -> {
+            final OutputStream outputStream = proc.getOutputStream();
             try (
-                    final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()))
+                    final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(outputStream))
             ) {
                 Thread.sleep(25);
-                bw.write("ls /home\n");
+                bw.write(cmd + "\n");
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -38,19 +60,19 @@ public class LooplessMain {
         });
 
         final Thread out = Thread.ofVirtual().start(() -> {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-                List<String> lines = new ArrayList<>();
+            final InputStream inputStream = proc.getInputStream();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 int i = 0;
                 while (true) {
                     if (br.ready()) {
                         String line = br.readLine();
-                        lines.add(line);
+                        ref.lines.add(line);
 //                        waitAndLog("if");
                     } else {
-                        if (!lines.isEmpty()) {
-                            lines.forEach(System.out::println);
-                            lines = new ArrayList<>();
-                        }
+                        /*if (!ref.lines.isEmpty()) {
+                            ref.lines.forEach(System.out::println);
+                            ref.lines = new ArrayList<>();
+                        }*/
                         Thread.sleep(1);
                         i++;
                         if (i >= 250) {
@@ -65,17 +87,14 @@ public class LooplessMain {
             waitAndLog("Exiting the out thread");
         });
 
-        proc.waitFor();
-        waitAndLog("Finished proc.waitFor()");
-
         // wait for any last output; no need to wait for input thread
-        out.join();
-        waitAndLog("Finished out.join()");
+        try {
+            out.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        proc.destroy();
-        waitAndLog("Finished proc.destroy()");
-
-        System.exit(proc.exitValue());
+        return ref.lines;
     }
 
     private static void waitAndLog(String s) {
