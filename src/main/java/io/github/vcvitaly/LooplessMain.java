@@ -30,7 +30,8 @@ public class LooplessMain {
                     final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()))
             ) {
                 Thread.sleep(3);
-                bw.write("ls /home");
+                bw.write("ls /home\n");
+//                Thread.sleep(5);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -45,7 +46,7 @@ public class LooplessMain {
                     if (br.ready()) {
                         String line = br.readLine();
                         lines.add(line);
-                        waitAndLog("if");
+//                        waitAndLog("if");
                     } else {
                         if (!lines.isEmpty()) {
                             lines.forEach(System.out::println);
@@ -56,7 +57,7 @@ public class LooplessMain {
                         if (i >= 10) {
                             break;
                         }
-                        waitAndLog("else");
+//                        waitAndLog("else");
                     }
                 }
             } catch (IOException | InterruptedException ex) {
