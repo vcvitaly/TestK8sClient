@@ -29,9 +29,8 @@ public class LooplessMain {
             try (
                     final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()))
             ) {
-                Thread.sleep(3);
+                Thread.sleep(25);
                 bw.write("ls /home\n");
-//                Thread.sleep(5);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -54,7 +53,7 @@ public class LooplessMain {
                         }
                         Thread.sleep(1);
                         i++;
-                        if (i >= 10) {
+                        if (i >= 250) {
                             break;
                         }
 //                        waitAndLog("else");
