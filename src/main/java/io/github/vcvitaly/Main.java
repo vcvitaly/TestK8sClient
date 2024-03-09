@@ -34,7 +34,7 @@ public class Main {
         // final Process proc = exec.exec("default", "nginx-4217019353-k5sn9", new String[]
         //   {"sh", "-c", "echo foo"}, true, tty);
         final Process proc =
-                exec.exec("default", "nginx-0e66fad1-7fddb66f44-cwp5v", new String[] {"sh"}, true, tty);
+                exec.exec("default", "nginx-6748cb78-7fddb66f44-v8kjt", new String[] {"sh"}, true, tty);
 
         Thread in =
                 new Thread(
