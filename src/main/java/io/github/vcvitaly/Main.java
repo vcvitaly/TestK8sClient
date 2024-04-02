@@ -34,7 +34,7 @@ public class Main {
         // final Process proc = exec.exec("default", "nginx-4217019353-k5sn9", new String[]
         //   {"sh", "-c", "echo foo"}, true, tty);
         final Process proc =
-                exec.exec("default", "nginx-6748cb78-7fddb66f44-v8kjt", new String[] {"sh"}, true, tty);
+                exec.exec("default", "nginx-ea3f06fa-7fddb66f44-685zl", new String[] {"sh"}, true, tty);
 
         Thread in =
                 new Thread(
@@ -105,7 +105,7 @@ public class Main {
         System.exit(proc.exitValue());
     }
 
-    public static void listPods() throws IOException, ApiException {
+    /*public static void listPods() throws IOException, ApiException {
         ApiClient client = Config.defaultClient();
         Configuration.setDefaultApiClient(client);
 
@@ -117,5 +117,5 @@ public class Main {
         for (V1Pod item : list.getItems()) {
             System.out.println(item.getMetadata().getName());
         }
-    }
+    }*/
 }

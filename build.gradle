@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.kubernetes:client-java:15.0.1'
+    implementation 'io.kubernetes:client-java:20.0.1'
     implementation 'org.buildobjects:jproc:2.8.2'
 
     testImplementation platform('org.junit:junit-bom:5.9.1')

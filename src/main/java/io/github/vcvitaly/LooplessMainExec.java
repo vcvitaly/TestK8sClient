@@ -23,8 +23,8 @@ public class LooplessMainExec {
 
         Exec exec = new Exec();
 
-        System.out.println(executeInProc(exec, new String[]{"ls", "/home"}));
-        System.out.println(executeInProc(exec, new String[]{"ls", "/home"}));
+        System.out.println(executeInProc(exec, new String[]{"ls", "/"}));
+//        System.out.println(executeInProc(exec, new String[]{"ls", "/home"}));
 //        Thread.sleep(1000);
 //        System.out.println(executeInProc(proc, "ls /home"));
     }
@@ -32,7 +32,7 @@ public class LooplessMainExec {
     private static List<String> executeInProc(Exec exec, String[] cmdParts) throws IOException, ApiException, InterruptedException {
         boolean tty = System.console() != null;
         final Process proc =
-                exec.exec("default", "nginx-6748cb78-7fddb66f44-v8kjt", cmdParts, true, tty);
+                exec.exec("default", "nginx", cmdParts, true, tty);
         final var ref = new Object() {
             List<String> lines = new ArrayList<>();
         };
